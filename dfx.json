@@ -4,6 +4,13 @@
       "main": "src/inception/main.mo",
       "type": "motoko"
     },
+    "inception_interface": {
+      "main": "src/inception_interface/main.mo",
+      "type": "motoko",
+      "dependencies": [
+        "inception"
+      ]
+    },
     "inception_assets": {
       "dependencies": [
         "inception"
