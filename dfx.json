@@ -4,27 +4,27 @@
       "main": "src/object/main.mo",
       "type": "motoko"
     },
-    "inception": {
-      "main": "src/inception/main.mo",
+    "momento": {
+      "main": "src/momento/main.mo",
       "type": "motoko"
     },
-    "inception_interface": {
-      "main": "src/inception_interface/main.mo",
+    "momento_interface": {
+      "main": "src/momento_interface/main.mo",
       "type": "motoko",
       "dependencies": [
-        "inception"
+        "momento"
       ]
     },
-    "inception_assets": {
+    "momento_assets": {
       "dependencies": [
-        "inception"
+        "momento"
       ],
       "frontend": {
-        "entrypoint": "src/inception_assets/src/index.html"
+        "entrypoint": "src/momento_assets/src/index.html"
       },
       "source": [
-        "src/inception_assets/assets",
-        "dist/inception_assets/"
+        "src/momento_assets/assets",
+        "dist/momento_assets/"
       ],
       "type": "assets"
     }
