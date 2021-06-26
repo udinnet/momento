@@ -2,6 +2,13 @@
   "canisters": {
     "object": {
       "main": "src/object/main.mo",
+      "type": "motoko",
+      "dependencies": [
+        "bucket"
+      ]
+    },
+    "bucket": {
+      "main": "src/bucket/main.mo",
       "type": "motoko"
     },
     "momento": {
