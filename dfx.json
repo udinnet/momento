@@ -1,5 +1,9 @@
 {
   "canisters": {
+    "object": {
+      "main": "src/object/main.mo",
+      "type": "motoko"
+    },
     "inception": {
       "main": "src/inception/main.mo",
       "type": "motoko"
