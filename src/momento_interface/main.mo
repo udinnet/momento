@@ -1,4 +1,4 @@
-import Inception "canister:inception"
+import momento "canister:momento"
 
 actor {
     public type Name = Text;
@@ -7,6 +7,6 @@ actor {
     stable var num : Phone = "";
 
     public func find(name: Name) : async ?Phone {
-        await Inception.lookup(name);
+        await momento.lookup(name);
     };
 };
