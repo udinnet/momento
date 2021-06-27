@@ -1,4 +1,4 @@
-import Text "mo:base/Text";
+import Blob "mo:base/Blob";
 import Map "mo:base/HashMap";
 import Array "mo:base/Array";
 import Iter "mo:base/Iter";
@@ -12,14 +12,14 @@ actor {
     public type UUID = Nat;
 
     //TODO: Review load factor
-    stable var storedMap : [(UUID, Text)] = [];
+    stable var storedMap : [(UUID, Blob)] = [];
     stable var objectId : UUID = 0;
 
-    let map =  Map.fromIter<UUID,Text>(storedMap.vals(),
+    let map =  Map.fromIter<UUID,Blob>(storedMap.vals(),
      10, Nat.equal, Hash.hash);
 
-
-    public func set(bucketId: Nat, value: Text) : async UUID {
+    //To run it use:  dfx canister call object set '(1, vec {40;20})'
+    public func set(bucketId: Nat, value: Blob) : async UUID {
         objectId += 1;
         map.put(objectId, value);
 
@@ -29,7 +29,7 @@ actor {
     };
 
 
-    public query func get(key: UUID): async ?Text {
+    public query func get(key: UUID): async ?Blob {
         return map.get(key);
     };
 
