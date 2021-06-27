@@ -41,5 +41,9 @@ actor {
     public query func get(id: Nat) : async Bucket {
         return bucketList[id];
     };
+    
+    public query func listBuckets() : async [Bucket]  {
+        return bucketList;
+    };
 
 };
