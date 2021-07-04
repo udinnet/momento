@@ -51,19 +51,17 @@ actor {
     };
 
     public query func isAllowed(user: Types.UserId, resource: Types.Resource, operation: Types.Operation) : async Bool {
-        var candidate : Types.Rule = {
+        let candidate : Types.Rule = {
             role = Option.get<Types.Role>(roleMap.get(user), "");
             resource = resource;
             operation = operation;
         };
         
-        var isDenied = Utils.ruleIn(denied, candidate);
-        if (isDenied != null) {
+        if (Utils.ruleIn(denied, candidate) != null) {
             return false;
         };
 
-        var isAllowed = Utils.ruleIn(allowed, candidate);
-        if (isAllowed != null) {
+        if (Utils.ruleIn(allowed, candidate) != null) {
             return true;
         };
 
