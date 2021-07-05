@@ -11,6 +11,10 @@
       "main": "src/bucket/main.mo",
       "type": "motoko"
     },
+    "acl": {
+      "main": "src/acl/main.mo",
+      "type": "motoko"
+    },
     "momento": {
       "main": "src/momento/main.mo",
       "type": "motoko"
