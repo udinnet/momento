@@ -1,31 +1,36 @@
-import Map "mo:base/HashMap";
-import Text "mo:base/Text";
-import List "mo:base/List";
-import Iter "mo:base/Iter";
 import Debug "mo:base/Debug";
+import Hash "mo:base/Blob";
+import Iter "mo:base/Iter";
+import List "mo:base/List";
+import Map "mo:base/HashMap";
 import Option "mo:base/Option";
-
+import Text "mo:base/Text";
+import TrieSet "mo:base/TrieSet";
 import Types "./helpers/types";
 import Utils "./helpers/utils";
 
 actor {
     private stable var allowed : List.List<Types.Rule> = List.nil();
     private stable var denied : List.List<Types.Rule> = List.nil();
-    private stable var roles : [(Types.UserId, Types.Role)] = [];
+    private stable var roles : [(Types.UserId, TrieSet.Set<Types.Role>)] = [];
 
-    let roleMap = Map.fromIter<Types.UserId, Types.Role>(roles.vals(), 10, Text.equal, Text.hash);
+    let roleMap = Map.fromIter<Types.UserId, TrieSet.Set<Types.Role>>(roles.vals(), 10, Text.equal, Text.hash);
 
     public func addRole(user: Types.UserId, role: Types.Role) : async () {
-        switch (roleMap.get(user)) {
+        let userExistingRoles = switch (roleMap.get(user)) {
             case null {
-                roleMap.put(user, role);
+                let userRoles : TrieSet.Set<Types.Role> = TrieSet.put<Types.Role>(TrieSet.empty<Types.Role>(), role, Text.hash role, Text.equal);
+                roleMap.put(user, userRoles);
             };
-            case (?id) { };
+            case (?userExistingRoles) {
+                let userRoles : TrieSet.Set<Types.Role> = TrieSet.put<Types.Role>(userExistingRoles, role, Text.hash role, Text.equal);
+                roleMap.put(user, userRoles);
+            };
         };
     };
 
-    public query func getRole(user: Types.UserId) : async ?Types.Role {
-        return roleMap.get(user);
+    public query func getRoles(user: Types.UserId) : async ?[Types.Role] {
+        return ?TrieSet.toArray<Types.Role>(Option.get<TrieSet.Set<Types.Role>>(roleMap.get(user), TrieSet.empty<Types.Role>()));
     };
 
     public func addAllowed(role: Types.Role, resource: Types.Resource, operation: Types.Operation) : async () {
@@ -51,17 +56,24 @@ actor {
     };
 
     public query func isAllowed(user: Types.UserId, resource: Types.Resource, operation: Types.Operation) : async Bool {
-        let candidate : Types.Rule = {
-            role = Option.get<Types.Role>(roleMap.get(user), "");
-            resource = resource;
-            operation = operation;
+        let userRoles = Option.get<TrieSet.Set<Types.Role>>(roleMap.get(user), TrieSet.empty<Types.Role>());
+        var candidateList : List.List<Types.Rule> = List.nil(); //mutable list, so using var here 
+        for (r in TrieSet.toArray<Types.Role>(userRoles).vals()) {
+            candidateList := List.push(
+                {
+                    role = r;
+                    resource = resource;
+                    operation = operation;
+                },
+                candidateList
+            )
         };
         
-        if (Utils.ruleIn(denied, candidate) != null) {
+        if (Utils.rulesIn(denied, candidateList) != null) {
             return false;
         };
 
-        if (Utils.ruleIn(allowed, candidate) != null) {
+        if (Utils.rulesIn(allowed, candidateList) != null) {
             return true;
         };
 
