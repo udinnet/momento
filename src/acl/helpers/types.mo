@@ -1,3 +1,5 @@
+import TrieSet "mo:base/TrieSet";
+
 module {
     public type Role = Text;
     public type Resource = Text;
